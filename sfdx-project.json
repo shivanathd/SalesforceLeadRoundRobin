@@ -1,0 +1,17 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true,
+      "package": "Lead Round Robin",
+      "versionName": "Version 1.0",
+      "versionNumber": "1.0.0.NEXT"
+    }
+  ],
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "59.0",
+  "packageAliases": {
+    "Lead Round Robin": "0Ho000000000000"
+  }
+}
