@@ -63,8 +63,8 @@ Lead 4 → Queue2-User2
 
 ```mermaid
 graph LR
-    A[1. Check Box] --> B[2. Save Lead]
-    B --> C[3. Auto-Assigned!]
+    A[Check Box] --> B[Save Lead]
+    B --> C[Auto-Assigned!]
     C --> D[Box Unchecks]
 ```
 
