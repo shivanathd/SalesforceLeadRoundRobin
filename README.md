@@ -572,11 +572,24 @@ A: Not in current version. All queues get equal distribution. Weighted distribut
 
 ## 📞 Support
 
-- 📧 Email: support@yourcompany.com
-- 💬 Slack: #round-robin-support
-- 📚 Wiki: [Internal Wiki Link]
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/salesforce-lead-round-robin/issues)
+### Developed by Mindcat
+
+🌐 **Website**: [https://mindcat.ai](https://mindcat.ai)
+
+📍 **Dubai, United Arab Emirates**
+
+**Global Headquarters**  
+Office Address:  
+Office F-15 Warba Center 1st Floor, Abu Baker Al Siddique, Dubai, UAE
+
+**Registered Address:**  
+DUQE Square Business Centre, Mina Rashid, QE2, Dubai, UAE
+
+📞 **Phone**: +971 4 266 2348  
+📧 **Email**: info@mindcat.ai
+
+🐛 **Issues**: [GitHub Issues](https://github.com/shivanathd/SalesforceLeadRoundRobin/issues)
 
 ---
 
-**Built with ❤️ by Your Team** | [Documentation](docs/) | [Changelog](CHANGELOG.md) | [Roadmap](ROADMAP.md)
+**Built with ❤️ by [Mindcat](https://mindcat.ai)** | [Documentation](docs/) | [Changelog](CHANGELOG.md) | [Roadmap](ROADMAP.md)
