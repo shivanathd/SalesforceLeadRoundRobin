@@ -53,7 +53,7 @@ public with sharing class RoundRobinAssignmentHandler {
     /**
      * @description Result class for assignment operations
      */
-    public class AssignmentResult {
+    global class AssignmentResult {
         public Boolean success;
         public String errorMessage;
         public Id assignedTo;
@@ -600,7 +600,6 @@ public with sharing class RoundRobinAssignmentHandler {
             SELECT Id, Current_Queue_Index__c, Queue_User_Indices__c,
                    Last_Assignment_DateTime__c, Last_Assigned_User__c, Total_Assignments__c
             FROM Round_Robin_Assignment_State__c
-            ORDER BY CreatedDate DESC
             LIMIT 1
             FOR UPDATE
         ];
@@ -623,7 +622,6 @@ public with sharing class RoundRobinAssignmentHandler {
                     SELECT Id, Current_Queue_Index__c, Queue_User_Indices__c,
                            Last_Assignment_DateTime__c, Last_Assigned_User__c, Total_Assignments__c
                     FROM Round_Robin_Assignment_State__c
-                    ORDER BY CreatedDate DESC
                     LIMIT 1
                     FOR UPDATE
                 ];
