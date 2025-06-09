@@ -14,6 +14,7 @@
 - ✅ **Improved Performance** - Optimized for 10,000+ record operations
 - ✅ **Complete Test Coverage** - 90%+ code coverage with bulk scenarios
 - ✅ **Security Hardened** - CRUD/FLS validation and null-safe operations
+- 📚 **Comprehensive Documentation** - Added deletion handling scenarios and UI-based solutions
 
 ## 📋 Table of Contents
 - [Business Logic Analysis](#-business-logic-analysis) 🆕
@@ -26,6 +27,7 @@
 - [Components Reference](#-components-reference)
 - [Usage Examples](#-usage-examples)
 - [Troubleshooting](#-troubleshooting)
+- [Handling Deleted Records](#-handling-deleted-records--special-scenarios) 🆕
 - [Best Practices](#-best-practices)
 - [FAQ](#-frequently-asked-questions)
 
@@ -538,6 +540,227 @@ sequenceDiagram
 1. Delete the Round Robin Assignment State record
 2. System automatically creates fresh state on next assignment
 
+## 🔄 Handling Deleted Records & Special Scenarios
+
+### Understanding Round Robin State Persistence
+
+> **Important**: The round robin system maintains its position even when records are deleted. This ensures long-term fairness but can cause confusion in certain scenarios.
+
+**Example**: If Queue A gets 3 leads and Queue B gets 2 leads, then you delete all 5 leads, the next lead will go to Queue B (continuing from where it left off).
+
+### Common Scenarios and Solutions
+
+#### 🎯 Scenario 1: Accidentally Deleted a Single Lead
+
+**Situation**: User creates a lead, realizes they made a mistake, deletes it, and wants to recreate it for the same person/queue.
+
+**Solution A: Use Recycle Bin (Easiest - Within 15 Days)**
+1. Click **App Launcher** (9-dot grid)
+2. Search for "**Recycle Bin**"
+3. Find your deleted Lead (sort by Deleted Date)
+4. Click the lead name to view details
+5. Click "**Restore**"
+6. ✅ Lead returns with original owner - no round robin triggered!
+
+**Solution B: Direct Assignment (After 15 Days)**
+1. Create new Lead with all information
+2. **DO NOT** check "Route to Round Robin" checkbox
+3. Save the lead
+4. Go to the Lead record
+5. Click "**Change Owner**" button
+6. Select the desired User or Queue
+7. Click "**Save**"
+
+#### 🎯 Scenario 2: Bulk Recreation of Deleted Leads
+
+**Situation**: Marketing deleted 500 leads by mistake and needs to recreate them for the same owners.
+
+**Solution A: Data Loader with Direct Assignment**
+1. Prepare your CSV file with owner information:
+   ```csv
+   FirstName,LastName,Company,Email,OwnerId,Route_to_Round_Robin__c
+   John,Doe,Acme Corp,john@acme.com,005xx000001234,FALSE
+   Jane,Smith,TechCorp,jane@tech.com,00Gxx000001234,FALSE
+   ```
+   
+2. **Important columns**:
+   - `OwnerId`: The User ID or Queue ID (18-character)
+   - `Route_to_Round_Robin__c`: Set to FALSE
+   
+3. Use Data Loader:
+   - Choose "Insert"
+   - Select your CSV file
+   - Map the fields (ensure Route_to_Round_Robin__c maps to FALSE)
+   - Complete the import
+
+**Solution B: Recycle Bin Mass Restore**
+1. Go to **Setup** → **Recycle Bin**
+2. Select multiple records (checkbox)
+3. Click "**Restore**" button
+4. All leads return with original owners
+
+#### 🎯 Scenario 3: Import Historical Data Without Round Robin
+
+**Situation**: Migrating 10,000 leads from old system with predetermined owners.
+
+**Best Practice Setup**:
+1. In Data Loader CSV:
+   ```csv
+   FirstName,LastName,Company,OwnerId,Route_to_Round_Robin__c,Lead_Source
+   John,Doe,Acme,005xx001,FALSE,Legacy System
+   Jane,Smith,Tech,005xx002,FALSE,Legacy System
+   ```
+
+2. Create a List View to monitor:
+   - **Name**: "Legacy Import Leads"
+   - **Filter**: Lead Source = 'Legacy System' AND Route_to_Round_Robin__c = FALSE
+
+#### 🎯 Scenario 4: Temporary Lead Creation for Testing
+
+**Situation**: Admin wants to create test leads without affecting round robin position.
+
+**Solution: Test Lead Identification**
+1. When creating test lead:
+   - Set **Last Name** to include "TEST" (e.g., "TEST Smith")
+   - Set **Company** to "TEST COMPANY"
+   - **DO NOT** check "Route to Round Robin"
+   
+2. Create a List View for cleanup:
+   - **Name**: "Test Leads - Delete Regularly"
+   - **Filter**: Company = 'TEST COMPANY' OR Last Name contains 'TEST'
+
+#### 🎯 Scenario 5: VIP Leads That Need Specific Assignment
+
+**Situation**: High-value leads that must go to specific senior reps.
+
+**Solution: VIP Lead Process**
+1. Create the Lead normally
+2. **DO NOT** check "Route to Round Robin"
+3. Set **Rating** = "Hot"
+4. Save the lead
+5. Use "**Change Owner**" to assign to VIP handler
+6. Consider creating a Process Builder:
+   ```
+   IF Rating = 'Hot' AND CreatedDate = TODAY
+   THEN Assign to User "Senior Rep Queue"
+   ```
+
+### 📋 Best Practices for Avoiding Issues
+
+#### 1. **Soft Delete Pattern**
+Instead of deleting leads, consider:
+- Change **Status** to "Disqualified" or "Duplicate"
+- Create a custom checkbox "**Is_Deleted__c**"
+- Filter these out from list views and reports
+
+#### 2. **Create a "Do Not Delete" List View**
+1. Go to Leads → Create New List View
+2. Name: "Active Leads - Do Not Delete"
+3. Filter: Status NOT EQUAL TO 'Disqualified'
+4. Share with: All Users
+
+#### 3. **Training Quick Reference Card**
+Share this with your users:
+
+```
+🚨 BEFORE DELETING A LEAD:
+1. Can I mark it as Disqualified instead? ✓
+2. Is this a duplicate? Mark Status = Duplicate ✓
+3. Really need to delete? Note the Owner first! ✓
+
+🔄 RECREATING A DELETED LEAD:
+1. Check Recycle Bin first (within 15 days)
+2. If recreating manually, DON'T check Round Robin
+3. Use "Change Owner" after creation
+```
+
+#### 4. **Set Up Data Protection**
+1. **Restrict Delete Permission**:
+   - Go to Profiles/Permission Sets
+   - Remove "Delete" on Leads for most users
+   - Only allow managers to delete
+
+2. **Create Validation Rule**:
+   ```
+   Rule Name: Prevent_Deletion_of_Assigned_Leads
+   Error Condition Formula: 
+   ISCHANGED(IsDeleted) && 
+   NOT($User.Id = 'admin_user_id') &&
+   Assigned_Through_Round_Robin__c = TRUE
+   Error Message: "Cannot delete leads assigned through Round Robin. Please mark as Disqualified instead."
+   ```
+
+### 📊 Understanding Distribution After Deletions
+
+**Visual Example**: 
+```
+Day 1: Create 5 leads
+├─ Lead 1 → Sales Queue ✓
+├─ Lead 2 → Support Queue ✓
+├─ Lead 3 → Sales Queue ✓
+├─ Lead 4 → Support Queue ✓
+└─ Lead 5 → Sales Queue ✓
+Result: Sales=3, Support=2
+
+[All 5 leads deleted]
+
+Day 2: Create 5 new leads (system remembers position!)
+├─ Lead 6 → Support Queue ✓ (continues from where it left)
+├─ Lead 7 → Sales Queue ✓
+├─ Lead 8 → Support Queue ✓
+├─ Lead 9 → Sales Queue ✓
+└─ Lead 10 → Support Queue ✓
+Result: Support=3, Sales=2
+
+TOTAL FAIRNESS: Sales=5, Support=5 ✅
+```
+
+### 🛠️ Quick Fix Decision Tree
+
+```
+Need to handle a deleted lead?
+│
+├─ Single accidental deletion?
+│  ├─ Within 15 days? → Use Recycle Bin
+│  └─ After 15 days? → Create without Round Robin + Change Owner
+│
+├─ Bulk deletion recovery?
+│  ├─ Have original owner data? → Data Loader with OwnerId
+│  └─ No owner data? → Recycle Bin mass restore
+│
+├─ Importing historical data?
+│  └─ Always use Data Loader with Route_to_Round_Robin__c = FALSE
+│
+└─ Want to prevent future issues?
+   ├─ Implement soft delete pattern
+   ├─ Restrict delete permissions
+   └─ Train users on proper process
+```
+
+### 💡 Pro Tips
+
+1. **Monitor Round Robin State**:
+   ```sql
+   SELECT Current_Queue_Index__c, Total_Assignments__c,
+          Last_Assignment_DateTime__c
+   FROM Round_Robin_Assignment_State__c
+   ```
+
+2. **Check Distribution Balance**:
+   ```sql
+   SELECT Round_Robin_Queue__c, COUNT(Id) Lead_Count
+   FROM Lead
+   WHERE Assigned_Through_Round_Robin__c = true
+     AND CreatedDate = THIS_MONTH
+   GROUP BY Round_Robin_Queue__c
+   ```
+
+3. **Find Recently Deleted Leads**:
+   - Go to Reports → New Report
+   - Choose "Recycle Bin Records"
+   - Filter by Object = "Lead"
+   - Sort by Deleted Date
+
 ## ✅ Best Practices
 
 ### DO's
@@ -677,6 +900,27 @@ A: Sort Order determines queue rotation sequence. Order 1 gets leads before Orde
 
 **Q: Can I weight certain queues to get more leads?**
 A: Not in current version. All queues get equal distribution. Weighted distribution in roadmap.
+
+**Q: Why did my recreated lead go to a different queue?**
+A: The system maintains its position even after deletions to ensure long-term fairness. To assign to the same owner, use Recycle Bin or create without checking Round Robin.
+
+**Q: I deleted 5 leads and recreated them. Why did the distribution change?**
+A: This is correct behavior! The system remembers where it left off. If Queue A had 3 leads before deletion, Queue B will get the next lead to maintain fairness over time.
+
+**Q: How can I import 1000 leads without triggering round robin?**
+A: In your Data Loader CSV, set Route_to_Round_Robin__c = FALSE and include the OwnerId column with the desired owner for each lead.
+
+**Q: What's the best way to handle accidental deletions?**
+A: Use the Recycle Bin (within 15 days) to restore with original owners. After 15 days, create new leads without checking Round Robin and manually assign owners.
+
+**Q: Can I prevent users from deleting leads?**
+A: Yes! Remove "Delete" permission from Lead object in their Profile/Permission Set. Consider using Status = "Disqualified" instead of deletion.
+
+**Q: How do I reset the round robin position to start fresh?**
+A: Go to Setup → Custom Objects → Round Robin Assignment State → Delete the record. The system will create a new one starting from position 0.
+
+**Q: What happens to round robin if all users in a queue are deactivated?**
+A: The system will skip that queue and try the next one. If NO queues have active users, leads will error with a clear message.
 
 ---
 
