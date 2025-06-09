@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Assignments__c</fullName>
+    <label>Total Assignments</label>
+    <type>Number</type>
+    <precision>18</precision>
+    <scale>0</scale>
+    <defaultValue>0</defaultValue>
+    <description>Total number of leads assigned through round robin</description>
+    <inlineHelpText>Lifetime count of all round robin assignments</inlineHelpText>
+    <required>false</required>
+</CustomField>

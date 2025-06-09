@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Queue_User_Indices__c</fullName>
+    <label>Queue User Indices</label>
+    <type>LongTextArea</type>
+    <length>32768</length>
+    <visibleLines>5</visibleLines>
+    <description>JSON map storing the current user index for each queue</description>
+    <inlineHelpText>Stores position tracking for each queue in JSON format</inlineHelpText>
+</CustomField>

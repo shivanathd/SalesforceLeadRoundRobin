@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Round_Robin_Triggered_By__c</fullName>
+    <label>Round Robin Triggered By</label>
+    <type>Lookup</type>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Leads Round Robin Triggered</relationshipLabel>
+    <relationshipName>Round_Robin_Triggered_Leads</relationshipName>
+    <description>User who triggered the round robin assignment</description>
+    <inlineHelpText>The user who checked the Route to Round Robin checkbox</inlineHelpText>
+    <required>false</required>
+</CustomField>

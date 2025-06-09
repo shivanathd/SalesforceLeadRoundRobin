@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Assigned_User__c</fullName>
+    <label>Last Assigned User</label>
+    <type>Lookup</type>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Round Robin Last Assignments</relationshipLabel>
+    <relationshipName>Round_Robin_Last_Assignments</relationshipName>
+    <description>The user who received the most recent round robin assignment</description>
+    <inlineHelpText>Last user to receive a lead via round robin</inlineHelpText>
+    <required>false</required>
+</CustomField>

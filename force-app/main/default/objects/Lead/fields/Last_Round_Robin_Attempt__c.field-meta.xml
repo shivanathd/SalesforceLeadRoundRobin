@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Round_Robin_Attempt__c</fullName>
+    <label>Last Round Robin Attempt</label>
+    <type>DateTime</type>
+    <description>Date and time of the last round robin assignment attempt</description>
+    <inlineHelpText>Timestamp of the most recent assignment attempt, successful or not</inlineHelpText>
+    <required>false</required>
+</CustomField>

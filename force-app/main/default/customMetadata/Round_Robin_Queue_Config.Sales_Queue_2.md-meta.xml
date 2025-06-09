@@ -4,7 +4,7 @@
     <protected>false</protected>
     <values>
         <field>Queue_ID__c</field>
-        <value xsi:type="xsd:string">00G000000000002</value>
+        <value xsi:type="xsd:string">REPLACE_WITH_ACTUAL_QUEUE_ID_2</value>
     </values>
     <values>
         <field>Queue_Developer_Name__c</field>
@@ -16,6 +16,6 @@
     </values>
     <values>
         <field>Sort_Order__c</field>
-        <value xsi:type="xsd:double">2</value>
+        <value xsi:type="xsd:long">2</value>
     </values>
 </CustomMetadata>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Round_Robin_Processing__c</fullName>
+    <label>Round Robin Processing</label>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+    <description>Internal field used to prevent recursion during round robin processing</description>
+    <inlineHelpText>System field - do not modify</inlineHelpText>
+</CustomField>

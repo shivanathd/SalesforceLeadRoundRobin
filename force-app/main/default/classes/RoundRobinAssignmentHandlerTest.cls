@@ -9,7 +9,16 @@ private class RoundRobinAssignmentHandlerTest {
     static void setupTestData() {
         // Create test users
         List<User> testUsers = new List<User>();
-        Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
+        List<Profile> profiles = [SELECT Id FROM Profile WHERE Name IN ('Standard User', 'System Administrator') ORDER BY Name DESC LIMIT 1];
+        if (profiles.isEmpty()) {
+            // Fallback to any available profile
+            profiles = [SELECT Id FROM Profile WHERE UserType = 'Standard' LIMIT 1];
+            if (profiles.isEmpty()) {
+                // Last resort - get any profile
+                profiles = [SELECT Id FROM Profile LIMIT 1];
+            }
+        }
+        Profile p = profiles[0];
         
         for (Integer i = 0; i < 10; i++) {
             User u = new User(

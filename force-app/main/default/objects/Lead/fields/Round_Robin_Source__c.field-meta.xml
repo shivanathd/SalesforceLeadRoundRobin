@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Round_Robin_Source__c</fullName>
+    <label>Round Robin Source</label>
+    <type>Text</type>
+    <length>50</length>
+    <description>Source of the round robin assignment trigger</description>
+    <inlineHelpText>Manual, Data Loader, Batch, API, etc.</inlineHelpText>
+    <required>false</required>
+</CustomField>

@@ -5,6 +5,10 @@
  */
 public with sharing class RoundRobinAssignmentHandler {
     
+    // Constants
+    private static final Integer MAX_INDEX_BEFORE_RESET = 10000;
+    private static final Integer DATA_LOADER_THRESHOLD = 50;
+    
     // Cache for queue configurations
     private static Map<String, Round_Robin_Queue_Config__mdt> queueConfigCache;
     
@@ -26,8 +30,21 @@ public with sharing class RoundRobinAssignmentHandler {
     // Flag to track if state needs update
     private static Boolean stateNeedsUpdate = false;
     
-    // Recursion prevention
-    private static Set<Id> processedLeadIds = new Set<Id>();
+    // Recursion prevention - track by operation type
+    private static Map<String, Set<Id>> processedLeadIdsByContext = new Map<String, Set<Id>>();
+    
+    // Get context-specific processed IDs
+    private static Set<Id> getProcessedLeadIds() {
+        String context = Trigger.isExecuting ? 
+            (Trigger.isBefore ? 'BEFORE' : 'AFTER') + '_' + 
+            (Trigger.isInsert ? 'INSERT' : 'UPDATE') : 
+            'NON_TRIGGER';
+        
+        if (!processedLeadIdsByContext.containsKey(context)) {
+            processedLeadIdsByContext.put(context, new Set<Id>());
+        }
+        return processedLeadIdsByContext.get(context);
+    }
     
     // Test context support
     @TestVisible
@@ -105,15 +122,16 @@ public with sharing class RoundRobinAssignmentHandler {
                 return results;
             }
             
-            // Check for recursion - use iterator for safe removal
+            // Check for recursion - use context-aware tracking
+            Set<Id> processedIds = getProcessedLeadIds();
             List<Lead> nonRecursiveLeads = new List<Lead>();
             for (Lead lead : validLeads) {
-                if (lead.Id != null && processedLeadIds.contains(lead.Id)) {
-                    results.put(lead.Id, new AssignmentResult(false, 'Lead already processed in this transaction'));
+                if (lead.Id != null && processedIds.contains(lead.Id)) {
+                    results.put(lead.Id, new AssignmentResult(false, 'Lead already processed in this context'));
                 } else {
                     nonRecursiveLeads.add(lead);
                     if (lead.Id != null) {
-                        processedLeadIds.add(lead.Id);
+                        processedIds.add(lead.Id);
                     }
                 }
             }
@@ -418,7 +436,7 @@ public with sharing class RoundRobinAssignmentHandler {
                         // Check cached user active status
                         Boolean isActive = activeUsersCache.get(assignedMember.UserOrGroupId);
                         
-                        if (isActive == true) {
+                        if (Boolean.TRUE.equals(isActive)) {
                             // Assign to user
                             lead.OwnerId = assignedMember.UserOrGroupId;
                             lead.Assigned_Through_Round_Robin__c = true;
@@ -492,11 +510,14 @@ public with sharing class RoundRobinAssignmentHandler {
         if (System.isScheduled()) return 'Scheduled';
         
         // Check if it's from Data Loader by looking at bulk size
-        if (Trigger.isExecuting && Trigger.new != null && Trigger.new.size() > 50) {
-            return 'Data Loader';
+        if (Trigger.isExecuting) {
+            if (Trigger.new != null && Trigger.new.size() > DATA_LOADER_THRESHOLD) {
+                return 'Data Loader';
+            }
+            return 'Manual';
         }
         
-        return 'Manual';
+        return 'API';
     }
     
     /**
@@ -558,7 +579,11 @@ public with sharing class RoundRobinAssignmentHandler {
             }
             
             // More robust queue ID validation
-            if (!Pattern.matches('^00G[a-zA-Z0-9]{15}$', config.Queue_ID__c)) {
+            // Allow placeholder values during deployment
+            if (config.Queue_ID__c.startsWith('REPLACE_WITH_ACTUAL_QUEUE_ID')) {
+                System.debug(LoggingLevel.WARN, 'Placeholder queue ID detected: ' + config.Queue_ID__c + 
+                    '. Please update with actual Queue ID before use.');
+            } else if (!Pattern.matches('^00G[a-zA-Z0-9]{15}$', config.Queue_ID__c)) {
                 System.debug(LoggingLevel.ERROR, 'Invalid queue ID format: ' + config.Queue_ID__c);
                 return false;
             }
@@ -668,10 +693,10 @@ public with sharing class RoundRobinAssignmentHandler {
      * @description Clean up high indices to prevent JSON size overflow
      */
     private static void cleanupHighIndices() {
-        // Reset indices that are too high (over 10000) back to 0
+        // Reset indices that are too high back to 0
         for (String queueId : queueUserIndices.keySet()) {
             Integer index = queueUserIndices.get(queueId);
-            if (index > 10000) {
+            if (index > MAX_INDEX_BEFORE_RESET) {
                 queueUserIndices.put(queueId, 0);
                 System.debug(LoggingLevel.INFO, 'Reset high index for queue ' + queueId + ' from ' + index + ' to 0');
             }
@@ -683,7 +708,7 @@ public with sharing class RoundRobinAssignmentHandler {
      */
     @TestVisible
     private static void resetRecursionTracking() {
-        processedLeadIds.clear();
+        processedLeadIdsByContext.clear();
     }
     
     /**

@@ -33,14 +33,7 @@
         <name>CustomField</name>
     </types>
     
-    <!-- 3. Custom Metadata Records Third -->
-    <types>
-        <members>Round_Robin_Queue_Config.Sales_Queue_1</members>
-        <members>Round_Robin_Queue_Config.Sales_Queue_2</members>
-        <name>CustomMetadata</name>
-    </types>
-    
-    <!-- 4. Apex Classes Fourth -->
+    <!-- 3. Apex Classes -->
     <types>
         <members>RoundRobinTestHelper</members>
         <members>RoundRobinAssignmentHandler</members>
@@ -49,7 +42,7 @@
         <name>ApexClass</name>
     </types>
     
-    <!-- 5. Apex Triggers Last -->
+    <!-- 4. Apex Triggers Last -->
     <types>
         <members>LeadRoundRobinTrigger</members>
         <name>ApexTrigger</name>
