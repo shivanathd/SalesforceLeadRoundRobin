@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Match_Field__c</fullName>
+    <label>Match Field</label>
+    <description>Optional Lead field API name (e.g. Country). When set, only leads whose value is in Match Values go to this queue.</description>
+    <inlineHelpText>Lead field API name to filter on, e.g. Country or LeadSource. Leave blank to accept every lead.</inlineHelpText>
+    <type>Text</type>
+    <length>80</length>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <required>false</required>
+</CustomField>

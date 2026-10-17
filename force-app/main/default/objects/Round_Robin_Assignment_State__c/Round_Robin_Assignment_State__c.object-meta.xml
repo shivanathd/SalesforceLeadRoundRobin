@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <deploymentStatus>Deployed</deploymentStatus>
-    <label>Round Robin Assignment State</label>
-    <pluralLabel>Round Robin Assignment States</pluralLabel>
-    <nameField>
-        <displayFormat>RRAS-{0000}</displayFormat>
-        <label>State Record Name</label>
-        <type>AutoNumber</type>
-    </nameField>
-    <sharingModel>ReadWrite</sharingModel>
-    <description>Tracks the current state and position of round robin assignments across queues</description>
+    <description>Round robin position per queue, plus one __GLOBAL__ row for the queue-to-queue rotation. Maintained by RoundRobinService; delete rows (or run Reset Round Robin Rotation) to start over.</description>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
-    <enableHistory>true</enableHistory>
+    <enableHistory>false</enableHistory>
     <enableReports>true</enableReports>
-    <enableSearch>true</enableSearch>
+    <enableSearch>false</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
+    <label>Round Robin Assignment State</label>
+    <nameField>
+        <displayFormat>RRS-{0000}</displayFormat>
+        <label>State Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Round Robin Assignment States</pluralLabel>
+    <sharingModel>Private</sharingModel>
 </CustomObject>
