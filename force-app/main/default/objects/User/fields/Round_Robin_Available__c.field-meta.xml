@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Round_Robin_Available__c</fullName>
+    <label>Round Robin Available</label>
+    <description>Untick while the rep is on leave. Unavailable reps keep their place in the rotation but are skipped.</description>
+    <inlineHelpText>Untick to stop receiving round robin leads (vacation, leave, full pipeline).</inlineHelpText>
+    <type>Checkbox</type>
+    <defaultValue>true</defaultValue>
+</CustomField>

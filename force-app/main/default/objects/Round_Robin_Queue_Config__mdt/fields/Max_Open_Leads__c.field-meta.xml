@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Max_Open_Leads__c</fullName>
+    <label>Max Open Leads per Rep</label>
+    <description>Optional capacity cap. Reps who own this many open leads (not converted, status not starting with Closed) are skipped.</description>
+    <inlineHelpText>Leave blank for no cap.</inlineHelpText>
+    <type>Number</type>
+    <precision>6</precision>
+    <scale>0</scale>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <required>false</required>
+</CustomField>
