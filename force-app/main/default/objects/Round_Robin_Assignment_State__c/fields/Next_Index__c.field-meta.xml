@@ -3,6 +3,7 @@
     <fullName>Next_Index__c</fullName>
     <label>Next Position</label>
     <description>Zero-based position of the next rep (or next queue for the global row). Always kept below the rotation size.</description>
+    <inlineHelpText>Maintained by round robin. Set to 0, or run Reset Round Robin Rotation, to start this queue over.</inlineHelpText>
     <type>Number</type>
     <precision>9</precision>
     <scale>0</scale>

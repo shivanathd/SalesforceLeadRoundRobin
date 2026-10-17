@@ -47,7 +47,10 @@ public with sharing class RoundRobinActions {
         for (Integer i = 0; i < requests.size(); i++) {
             Result res = new Result();
             Lead l = after.get(requests[i].leadId);
-            if (!saves[i].isSuccess()) {
+            if (saves[i].isSuccess() && l == null) {
+                res.routed = false;
+                res.error = 'Lead not found after saving it.';
+            } else if (!saves[i].isSuccess()) {
                 res.routed = false;
                 res.error = saves[i].getErrors()[0].getMessage();
             } else if (l.Route_to_Round_Robin__c) {

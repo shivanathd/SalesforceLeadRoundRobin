@@ -4,9 +4,9 @@ Assigns new leads to sales reps in turn, across one or more queues, without ever
 
 Tick **Route to Round Robin** on a lead (or have a form, import, integration or Flow tick it) and the lead goes to the next rep in line. Reps on leave are skipped, busy reps can be capped, senior reps can take more turns, and each queue can accept only the leads that match it (for example `Country = India`). If nobody can take the lead, it still saves and the reason is written on the lead.
 
-![API 62.0](https://img.shields.io/badge/API-62.0-blue) ![Apex tests](https://img.shields.io/badge/Apex%20tests-25%20passing-brightgreen) ![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen) ![License](https://img.shields.io/badge/license-MIT-lightgrey)
+![API 62.0](https://img.shields.io/badge/API-62.0-blue) ![Apex tests](https://img.shields.io/badge/Apex%20tests-25%20passing-brightgreen) ![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen) ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-Tested on 17 Oct 2026 in a Developer Edition scratch org: 25 Apex tests (96% coverage), a production-style check-only deploy with `RunLocalTests`, a live end-to-end smoke test (6 of 6 scenarios through the Bulk API, REST API and Flow action endpoint, run twice), and Salesforce Code Analyzer with no severity 1 findings.
+Tested on 17 Oct 2026 in a Developer Edition scratch org: 25 Apex tests (95% coverage), a production-style check-only deploy with `RunLocalTests`, a live end-to-end smoke test (6 of 6 scenarios through the Bulk API, REST API and Flow action endpoint, run twice), and Salesforce Code Analyzer with no severity 1 findings.
 
 ## How it decides
 
@@ -56,7 +56,7 @@ sf project deploy start --source-dir force-app --target-org my-sandbox --test-le
    | Notify Assignee | Send the rep a bell and mobile notification on assignment. |
 
    An inactive *Example Sales Queue* record is included to copy from.
-3. **Give people access.** Assign the **Round Robin Admin** permission set to whoever manages routing, and **Round Robin User** to anyone who ticks the box or runs the flow action.
+3. **Give people access.** Assign the **Round Robin Admin** permission set to whoever manages routing (reps' availability and weight, reset, and read access to every routing field), and **Round Robin User** to anyone who ticks the box or runs the flow action. The outcome fields (queue, time, source, error) are read-only for everyone: only routing writes them.
 4. **Check it.** Developer Console > Execute Anonymous:
 
    ```apex
@@ -79,7 +79,7 @@ sf project deploy start --source-dir force-app --target-org my-sandbox --test-le
 | Route a new lead | Tick **Route to Round Robin** on create (web-to-lead hidden field, import column, integration, or a default in your form) |
 | Re-route an existing lead | Tick it again. It unticks itself after every attempt, so ticking always triggers a fresh routing. |
 | Route from automation | Flow action **Route Leads (Round Robin)**: pass Lead IDs, get back Routed, Owner ID, Queue and Error per lead |
-| Take a rep out for leave | Untick **Round Robin Available** on their User record. They keep their place and resume when re-ticked. |
+| Take a rep out for leave | Untick **Round Robin Available** on their User record (Round Robin Admin permission). They keep their place and resume when re-ticked. |
 | Give a rep more leads | Set **Round Robin Weight** on their User (1 to 10). Weight 2 = two leads per turn. |
 | Start the rotation over | Flow action **Reset Round Robin Rotation**, or `RoundRobinService.resetRotation();` (needs Round Robin Admin) |
 | See what went wrong | Lead list view **Round Robin Errors**, or the **Last Round Robin Error** field |

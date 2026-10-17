@@ -22,7 +22,7 @@ A rebuild. Version 1 never deployed: the handler did not compile (a `global` inn
 - Flow actions: **Route Leads (Round Robin)** and **Reset Round Robin Rotation**.
 - `RoundRobinSetupCheck.run()` health report.
 - Permission sets **Round Robin Admin** and **Round Robin User**, a **Round Robin Errors** list view, and a `Round_Robin_Admin` custom permission guarding reset.
-- 25 Apex tests (96% coverage) covering real scenarios: bulk loads, partial-success saves, low-privilege users, forced failures.
+- 25 Apex tests (95% coverage) covering real scenarios: bulk loads, partial-success saves, low-privilege users, forced failures.
 - `scripts/smoke-test.sh`: live end-to-end check in a scratch org through the Bulk API, REST API and Flow action endpoint.
 - `LICENSE` (MIT), regenerated `manifest/package.xml`.
 
